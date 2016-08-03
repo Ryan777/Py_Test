@@ -1,6 +1,9 @@
 #coding=utf-8
+#coding=utf-8
+#coding=utf-8
+#coding=utf-8
+#coding=utf-8
 import tweepy
-import time
 from local_config import *
 import mysql.connector
 conn = mysql.connector.connect(user='root', password='777',
@@ -10,38 +13,20 @@ conn = mysql.connector.connect(user='root', password='777',
 # change charset to utf8mb4
 c = conn.cursor()
 
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth = tweepy.AppAuthHandler('7FWpTHkeQMaO1bnHQYnd62De8', 'albUzEWdlrpI9gP8uH7FcCHi1Cgo2QLeKSPLPqNVIAUMimM2Fa')
+auth = tweepy.OAuthHandler(consumer_key7, consumer_secret7)
+auth.set_access_token(access_token7, access_secret7)
+
 api = tweepy.API(auth, wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
-
-#
 def Check_in_DB(user_id):
     # uid = user_id
     c.execute("select 1 from `Fellowship_Jun` where User_ID = "+str(user_id)+" limit 1;")
-    result = c.fetchone
+    result = c.fetchone()
     # print result
     if result == (1,):
         return True
     else:
         return False
-
-# def Check_in_DB(user_id):
-#     # uid = user_id
-#     print "before check"
-#     print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#     c.execute("select 1 from `Fellowship_Jun` where User_ID = "+str(user_id)+" limit 1;")
-#     print "middle check"
-#     print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#     result = c.fetchone()
-#     # print result
-#     print "after check"
-#     print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#     print
-#     if result == (1,):
-#         return True
-#     else:
-#         return False
 
 
 
@@ -53,14 +38,10 @@ for user in retweeter_ids_temp:
 print "There are "+ str(len(all_retweeters))+" retweeters in total!"
 
 recorded_user = 0
-saved_user = 0 ### for test
 
 for retweeter in all_retweeters:
-    # if False:
     if Check_in_DB(retweeter):
         print "This user "+ str(retweeter)+ " is already in the database"
-        print str(saved_user)+" users now"
-        saved_user+=1
         continue
     else:
         try:

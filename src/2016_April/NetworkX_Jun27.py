@@ -9,6 +9,8 @@ import tweepy
 from local_config import *
 
 import mysql.connector
+import time
+## initialization
 conn = mysql.connector.connect(user='root', password='777',
                               host='127.0.0.1',
                               database='Proposal',
@@ -20,52 +22,58 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth,  wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
+Tweet_DB = ''
+Fellowship_DB = ''
+original_user = 182695900
+
 
 ##要做好排序
-c.execute("SELECT User_id FROM `Paul Ryan` where Original_id = '738567224600858625' ORDER BY Local_Time;")
+c.execute("SELECT User_id FROM `To_be_analyzed` ORDER BY Local_Time;")
 retweeter_ids_temp = c.fetchall()
 all_retweeters = []
 for user in retweeter_ids_temp:
-    all_retweeters.append(int(user[0]))
+    all_retweeters.append(int(user[0]))  ## int
 print "There are "+ str(len(all_retweeters))+" retweeters in total!"
+print "The very first retweeter is "+str(all_retweeters[0])+", second : "+ str(all_retweeters[1])
 
 unfound_users = set(all_retweeters)
-
-original_user = 249346453
 all_retweeters.insert(0, original_user)
 
-
+##  MultiDiGraph??? Maybe for fellowship.
 G= nx.DiGraph()
 
 
 def get_followers(userID):
     ## get user's followers
-    c.execute("SELECT Follower_ID FROM `Fellowship` where User_ID = "+ str(userID))  ### why do I need to str(userID), i think it is a string already
+    c.execute("SELECT Follower_ID FROM `Fellowship_Jun_Cleaned` where User_ID = "+ str(userID))  ### why do I need to str(userID), i think it is a string already
     followers_id_tmp = c.fetchall()
     followers = []
     for follower in followers_id_tmp:
         followers.append(int(follower[0]))    ### make it a list of int
     print "There are "+ str(len(followers))+" followers of "+str(userID)+" !"
     followers = set(followers)  ## convert it to a set
-    print len(followers)
+    # print len(followers)
     return followers
 
 
-### add_edge() will add nodes automatically if it is not already in the graph
+imported_number = 0
 for user in all_retweeters:
     if user not in G:
         G.add_node(user)
     followers = get_followers(user)
     to_be_connected = followers & unfound_users
     for i in to_be_connected:
-        if i not in G:
-            G.add_node(i)
+        ### add_edge() will add nodes automatically if it is not already in the graph
+        # if i not in G:
+        #     G.add_node(i)
         G.add_edge(i,user)
     unfound_users = unfound_users - followers ## followers or to_be_connected ?? which one is better
     if user in unfound_users:
         unfound_users.remove(user)  ### remove user itself if it is still not found
         G.add_edge(user,original_user)
         ### in this case, means this user is not be connected to his parent, so just connect it to the original one (he probably got the tweet by searching function)
+    imported_number +=1
+    print "Already imported "+str(imported_number)+" users."
     if not unfound_users:
         break
 #
@@ -82,8 +90,11 @@ for user in all_retweeters:
 # # nx.draw(G,with_labels=True)
 # # plt.show()
 #
-nx.write_graphml(G,path = '/Users/Rampage/movies/MattOswaltVA.graphml')
-nx.write_graphml(G,path = '/Users/Rampage/movies/MattOswaltVA_original.graphml')  ## get a back-up
+
+# 会覆盖源文件, 很危险!
+file_name = "Graph_"+time.strftime("%Y-%m-%d-%H%M", time.localtime())
+nx.write_graphml(G,path = '/Users/Rampage/movies/'+file_name+'.graphml')
+nx.write_graphml(G,path = '/Users/Rampage/movies/'+file_name+'_backup.graphml')  ## get a back-up
 #
 # # followers = get_followers('55261782')
 # # print followers

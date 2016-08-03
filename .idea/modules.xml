@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../PyCharm/.idea/PyCharm.iml" filepath="$PROJECT_DIR$/../PyCharm/.idea/PyCharm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../PyGame/.idea/PyGame.iml" filepath="$PROJECT_DIR$/../PyGame/.idea/PyGame.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python 2.7/Crawler/.idea/Crawler.iml" filepath="$PROJECT_DIR$/../Python 2.7/Crawler/.idea/Crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python 3.5/Crawler_R/.idea/Crawler_R.iml" filepath="$PROJECT_DIR$/../Python 3.5/Crawler_R/.idea/Crawler_R.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Py_Test.iml" filepath="$PROJECT_DIR$/.idea/Py_Test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python 2.7/.idea/Python 2.7.iml" filepath="$PROJECT_DIR$/../Python 2.7/.idea/Python 2.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python 3.5/.idea/Python 3.5.iml" filepath="$PROJECT_DIR$/../Python 3.5/.idea/Python 3.5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python 3.5/Python Cookbook/.idea/Python Cookbook.iml" filepath="$PROJECT_DIR$/../Python 3.5/Python Cookbook/.idea/Python Cookbook.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Twitter/.idea/Twitter.iml" filepath="$PROJECT_DIR$/../Twitter/.idea/Twitter.iml" />
     </modules>
   </component>

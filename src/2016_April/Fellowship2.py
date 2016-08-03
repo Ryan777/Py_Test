@@ -16,7 +16,7 @@ api = tweepy.API(auth, wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
 def Check_in_DB(user_id):
     # uid = user_id
-    c.execute("select 1 from `Fellowship` where User_ID = "+str(user_id)+" limit 1;")
+    c.execute("select 1 from `Fellowship_Jun` where User_ID = "+str(user_id)+" limit 1;")
     result = c.fetchone()
     # print result
     if result == (1,):
@@ -25,28 +25,7 @@ def Check_in_DB(user_id):
         return False
 
 
-
-
-# uname = ""
-# user_id = "249346453"
-#
-# followers =[]
-# for page in tweepy.Cursor(api.followers_ids, id= user_id, count = 5000).pages():
-#     followers.extend(page)
-# print len(followers)
-# # print followers
-# print "--------------------"
-# store the followers into database
-
-
-### !!!! maybe the problem is there have to check every record in database
-# for follower in followers:
-#     # c.execute("INSERT INTO Fellowship (User_ID, Follower_ID) VALUES (%s,%s)",(original_user_id, follower))
-#     c.execute("INSERT INTO Fellowship (User_ID, Follower_ID) SELECT %s, %s FROM DUAL WHERE NOT EXISTS(SELECT User_ID,Follower_ID FROM Fellowship WHERE User_ID = %s &&Follower_ID = %s);",(user_id,follower,user_id,follower))
-# conn.commit()
-
-
-c.execute("SELECT User_id FROM `Paul Ryan` where Original_id = '738567224600858625' ORDER BY Local_Time;")
+c.execute("SELECT User_id FROM `To_be_analyzed` where Followers_count < 4000 ORDER BY Local_Time;")
 retweeter_ids_temp = c.fetchall()
 all_retweeters = []
 for user in retweeter_ids_temp:
@@ -60,17 +39,26 @@ for retweeter in all_retweeters:
         print "This user "+ str(retweeter)+ " is already in the database"
         continue
     else:
-        followers =[]
-        for page in tweepy.Cursor(api.followers_ids, id= retweeter, count = 5000).pages():
-            followers.extend(page)
-        # print len(followers)
-        i = 0
-        for follower in followers:
-            c.execute("INSERT INTO Fellowship (User_ID, Follower_ID) VALUES (%s,%s)",(retweeter, follower))
-            i+=1
-        conn.commit()
-        print "Insert "+str(i)+" data"
-        recorded_user+=1
-        print "Imported "+str(recorded_user)+ " users by now"
-        print
-
+        try:
+            followers =[]
+            for page in tweepy.Cursor(api.followers_ids, id= retweeter, count = 5000).pages():
+                followers.extend(page)
+            # print len(followers)
+            print "User "+str(retweeter)+" has "+str(len(followers))+ " followers"
+            i = 0
+            if len(followers)==0:   ### this user doesn't have any followers.
+                c.execute("INSERT INTO Fellowship_Jun (User_ID, Follower_ID) VALUES (%s,%s)",(retweeter, '0'))
+            else:
+                for follower in followers:
+                    c.execute("INSERT INTO Fellowship_Jun (User_ID, Follower_ID) VALUES (%s,%s)",(retweeter, follower))
+                    i+=1
+            conn.commit()
+            # print "Insert "+str(i)+" data"
+            print "Inserted the followers of "+str(retweeter)+" into database"
+            recorded_user+=1
+            print "Imported "+str(recorded_user)+ " users by now"
+            print
+        except tweepy.TweepError:  ## This user is a protected account.
+            print "The user "+ str(retweeter)+" is a protected account!"
+            c.execute("INSERT INTO Fellowship_Jun (User_ID, Follower_ID) VALUES (%s,%s)",(retweeter, '0'))
+            conn.commit()

@@ -6,7 +6,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="PyCharm" />
     <orderEntry type="module" module-name="Twitter" />
-    <orderEntry type="module" module-name="PyGame" />
+    <orderEntry type="module" module-name="Python Cookbook" />
+    <orderEntry type="module" module-name="Crawler" />
+    <orderEntry type="module" module-name="Crawler_R" />
+    <orderEntry type="module" module-name="Python 2.7" />
+    <orderEntry type="module" module-name="Python 3.5" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="myDocStringFormat" value="Google" />

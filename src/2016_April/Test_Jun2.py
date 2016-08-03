@@ -1,3 +1,5 @@
 #coding=utf-8
-aNo = ""
-print type(aNo)
+while True:
+
+    print "haha"
+    return False

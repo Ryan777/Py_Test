@@ -1,7 +1,9 @@
 #encoding=utf-8
+### Basic Streaming, the Listener is a little bit different from previous one.
 from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
+from local_config import *
 # import mysql.connector
 import time
 import json
@@ -22,60 +24,33 @@ asecret='g7TgKKOJ0Bj1ua7UvGnWT98ztvmzVXA72OIcd04OCifZU'
 
 class listener(StreamListener):
 
-    def on_data(self, data):
+    def on_status(self, status):
+        print status.text     ## it is the same as "all_data" in another version
+        return True
+    # def on_data(self, data):
+    #     all_data = json.loads(data)
+    #     print all_data
+    #     tweet = all_data["text"]
+    #     print "-------------"
 
-        all_data = json.loads(data)
-        tweet = all_data["text"]
-        username = all_data["user"]["screen_name"]
-        id = all_data["id_str"]
-
-        retweeted_id = ""
-        retweeted_user = ""
-        retweet_count = "-1"
-        # print(username)
-        # print(tweet)
-        if("retweeted_status" in all_data):
-            retweeted_id = all_data["retweeted_status"]["id_str"]
-            retweeted_user = all_data["retweeted_status"]["user"]["screen_name"]
-            retweet_count = all_data["retweeted_status"]["retweet_count"]
-
-        followers_count = all_data["user"]["followers_count"]
-
-        # print(mentioned_user )
-
-        # print("--------------------")
-
-
-        tTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(all_data["timestamp_ms"]) / 1000.0))
-
-        # c.execute("INSERT INTO  (ID, User_name, Retweeted_user, time, tweet, followers_count) VALUES (%s,%s,%s,%s,%s,%s)",
-        #     (id, username, retweeted_user, tTime, tweet,followers_count ))
-
-        # c.execute("INSERT INTO โคตรตอแหล (ID, User_name, Retweeted_id, Retweeted_user,, retweeted_count, time, tweet, followers_count) VALUES (%s,%s,%s,%s,%s,%s,%s)",
-        #     (id, username, retweeted_id, retweeted_user, tTime, tweet,followers_count ))
-        ### Have to COMMIT !!!!!
-
-        # c.execute("INSERT INTO `"+ myTopic +"` (ID, User_name, Retweeted_id, Retweeted_user, Retweeted_count, Local_time, tweet, followers_count) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
-        #     (id, username, retweeted_id, retweeted_user, retweet_count, tTime, tweet,followers_count ))
-        # conn.commit()
-
-        print(id)
-        # print(tweet)
-        # print(tTime)
-        print(data)
-
-        print("--------------------")
+    def on_error(self, status_code):
+        print(status_code)
+        print "here is an error"
         return True
 
-    def on_error(self, status):
-        print(status)
+    def on_timeout(self):
+        print "Timeout"
+        return True
 
 
-auth = OAuthHandler(ckey, csecret)
-auth.set_access_token(atoken, asecret)
+if __name__ == '__main__':
 
-#input the keyword here and it will be filtered from Twitter and written to the database
-# There are some problems with Thai encoding !!!!!!!!!!!!!!!!
-myTopic ="I'm in Bangkok"
-twitterStream = Stream(auth, listener())
-twitterStream.filter(track=[myTopic])
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_secret)
+    api = tweepy.API(auth,  wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
+
+    #input the keyword here and it will be filtered from Twitter and written to the database
+    # There are some problems with Thai encoding !!!!!!!!!!!!!!!!
+    myTopic ="I'm in Bangkok"
+    twitterStream = Stream(auth, listener())
+    twitterStream.filter(track = ['#FathersDay'])

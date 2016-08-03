@@ -91,8 +91,8 @@ if unfound_users:
 #
 # nx.draw(G,with_labels=True)
 # plt.show()
-
-nx.write_graphml(G,path = '/Users/Rampage/movies/Sukree.graphml')
+###
+# nx.write_graphml(G,path = '/Users/Rampage/movies/Sukree.graphml')
 
 # followers = get_followers('55261782')
 # print followers
